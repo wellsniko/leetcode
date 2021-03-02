@@ -24,3 +24,26 @@ def multiply_num_strings(num1: str, num2: str) -> str:
     return str(res1 * res2)
 
 # print(multiply_num_strings("12", "10"))
+
+def combinationSum(candidates, target):
+
+    candidates.sort()
+    solution = []
+
+    def summer(targ, temp, index):
+        if sum(temp) == target:
+            solution.append(temp)
+        if candidates[index] > targ:
+            return
+
+        while index < len(candidates):
+            summer(targ-candidates[index], temp + [candidates[index]], index)
+            index += 1
+
+    summer(target, [], 0)
+    return solution
+
+# print(combinationSum([2,3,4],5))
+
+
+# print(1000*(1.02**250))
