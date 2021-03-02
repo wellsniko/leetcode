@@ -1,4 +1,4 @@
-def bubble_sort(nums):
+def sortColors(nums):
     sorted = False
     while sorted is False:
         sorted = True
@@ -47,3 +47,21 @@ def combinationSum(candidates, target):
 
 
 # print(1000*(1.02**250))
+
+
+class Solution:
+    def multiply(self, num1: str, num2: str) -> str:
+
+        h = {'0': 0, '1': 1, '2': 2, '3': 3, '4': 4,
+             '5': 5, '6': 6, '7': 7, '8': 8, '9': 9}
+        res1 = 0
+        for char in num1:
+            res1 = 10*res1 + h[char]
+        res2 = 0
+        for char in num2:
+            res2 = 10*res2 + h[char]
+
+        return str(res1 * res2)
+
+
+# print(Solution.multiply(Solution, "4", "5"))
