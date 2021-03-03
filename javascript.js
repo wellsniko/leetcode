@@ -49,3 +49,36 @@ var isValidSudoku = function(board) {
     
     return true
 };
+
+
+
+//!slow solution
+
+function TreeNode(val, left, right) {
+    this.val = (val===undefined ? 0 : val)
+    this.left = (left===undefined ? null : left)
+    this.right = (right===undefined ? null : right)
+}
+
+var buildTree = function(preorder, inorder) {
+    if (preorder.length === 0 || inorder.length === 0) return 
+    const root = preorder.shift()
+    const inIndex = inorder.indexOf(root)
+
+    let leftPre = []
+    let leftIn = []
+
+    inorder.splice(inIndex, 1)
+    let i = 0
+    while (i < inIndex ){
+        leftPre.push(preorder.shift())
+        leftIn.push(inorder.shift())
+        i+=1
+    }
+
+    return new TreeNode(
+        root,
+        buildTree(leftPre, leftIn),
+        buildTree(preorder, inorder)
+    )
+};
