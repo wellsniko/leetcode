@@ -118,4 +118,50 @@ var treeSize = function(root){
     return 1 + Math.max(treeSize(root.right), treeSize(root.left));
 };
 
-//^
+//
+
+
+
+
+var removeNthFromEnd = function(head, n) {
+    
+    if (!head.next) return null
+  
+    
+    let stack = [head]
+    for (let node = head; node.next; node = node.next){
+        stack.push(node.next)
+    }
+    console.log(stack)
+    
+    if (n > 1) {
+        let removeIdx = stack.length-n
+        if (removeIdx === 0 ){
+            return stack[1]
+        }
+        stack[removeIdx-1].next = stack[removeIdx+1]
+        stack[removeIdx].next = null
+    } else if (n === 1) {
+        stack[stack.length-2].next = null
+    }
+    
+    return stack[0]
+    
+};
+
+
+var canJump = function(nums) {
+    let i =0
+    let max=0
+    
+    for(let i=0;i<nums.length;i++){
+        if(i > max){
+           return false
+           }
+        if(i + nums[i] >= nums.length-1){
+           return true
+           }
+        max = Math.max(max,i+nums[i])
+    }
+    
+};
