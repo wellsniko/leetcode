@@ -165,3 +165,247 @@ var canJump = function(nums) {
     }
     
 };
+
+
+var groupAnagrams = function (strs) {
+    var newArr = [];
+    strs.forEach((elem) => {
+        key = elem.split('').sort();
+        newArr[key] instanceof Array ? newArr[key].push(elem) : newArr[key] = [elem];
+    });
+    return Object.keys(newArr).map(function (k) { return newArr[k] });
+}
+
+var searchMatrix = function(matrix, target) {
+    let i = 0
+    let k = 0
+
+    if (matrix[i][k] > target) return false
+
+    while (i < matrix.length && matrix[i][k] < target  ){
+        if (matrix[i][k] === target) return true
+        i++
+    }
+
+    if (i >= matrix.length) i--
+
+    let spot
+    while (i > -1 && k < matrix[i].length){
+        spot = matrix[i][k]
+        if (spot === target ) {
+            return true
+        } else if (spot > target){
+            i--
+        } else {
+            k++
+        }
+    }
+    
+    return false
+};
+
+
+var combine = function(n, k) {
+    let solution = [];
+    
+    function dfs(curr, start){
+        if (curr.length === k){   
+            solution.push(curr)
+        }
+        if (curr.length > k) return
+        
+        for (let i=start;i<=n; i++){  
+            dfs(curr.concat(i), i+1)
+        }
+    }
+    
+    dfs([], 1)
+    return solution
+};
+
+
+var generateParenthesis = function(n) {
+    let solution = []
+    
+    function dfs(string, left, right){
+        if (string.length === n * 2){
+            solution.push(string)
+            return
+        }
+        if (left < n){
+            dfs(string+"(", left+1, right)
+        }
+        if (left > right){
+            dfs(string+")", left, right+1)
+        }
+    }
+
+    dfs("", 0, 0)
+    return solution
+};
+
+//swap every other node
+var swapPairs = function(head) {
+        if (!head) return null
+        let tempNode = head.next
+        if (!tempNode) return head
+    
+        head.next = tempNode.next
+        tempNode.next = head
+        head.next = swapPairs(head.next)
+        return tempNode
+
+};
+
+
+
+// var nextPermutation = function(nums) {
+//     let idx = -1
+//     let decreaser = -1
+//     let last = nums.length - 1
+//     for(let i = nums.length-1; i >0; i--){
+        
+//         if (nums[i-1] < nums[i]){
+//             decreaser = i - 1
+//             break;
+//         }
+//         idx = i
+//     }
+//     console.log(decreaser)
+//     if (decreaser === -1) return nums.sort()
+    
+    
+//     let leftHalf = nums.slice(0, decreaser)
+//     console.log(typeof leftHalf)
+//     let mid = nums[decreaser]
+//     console.log(typeof mid)
+//     let rightHalf = nums.slice(decreaser + 1, nums.length).sort()
+//     console.log(typeof rightHalf)
+//     leftHalf.push(rightHalf.shift())
+//     // console.log(leftHalf)
+//     // console.log(rightHalf)
+//     rightHalf.push(mid)
+//     rightHalf.sort()
+   
+//     console.log(rightHalf)
+//     console.log(leftHalf)
+//     let solution 
+//     solution = leftHalf.concat(rightHalf)
+//     console.log(typeof solution)
+//     // console.log(rightHalf)
+//     let hello = [1,2]
+//     console.log(typeof hello)
+//     return solution
+    
+    
+    
+// };
+
+// console.log(typeof nextPermutation([2,1,3,4]))
+
+
+var searchRange = function(nums, target) {
+    let i = 0
+    let k = nums.length - 1
+    let solution = [-1,-1]
+    
+    while (k >= i && (solution[0] === -1 || solution[1] === -1)){
+        
+        if (nums[k] === target && solution[1] === -1){
+            solution[1] = k    
+        }
+        if (nums[i] === target && solution[0] === -1) {
+            solution[0] = i
+        }
+        
+        if (solution[0] === -1) i++
+        if (solution[1] === -1) k --
+           
+    }
+    
+    return solution
+        
+};
+
+// console.log(searchRange([5,7,7,8,8,10], 6))
+
+var combinationSum = function(candidates, target) {
+    let solution = []
+
+    function dfs(candidates, target, start, temp){
+        if (target < 0) return
+        if (target === 0) {
+            // needs to be copy of temp
+            solution.push(temp.slice())
+            return
+        }
+            
+        for (var i = start; i < candidates.length; i++) {
+            temp.push(candidates[i])
+            dfs(candidates, target - candidates[i], i, temp)
+            temp.pop()
+        }
+    }
+    
+    dfs(candidates, target, 0, [])
+    return solution
+    
+      
+};
+
+
+//combo sum none of the same nums
+var combinationSum2 = function(candidates, target) {
+    candidates = candidates.sort()
+    solution = [];
+    dfs(candidates, target, [], 0)
+    return solution
+    
+    function dfs(candidates, target, temp, start){
+        if (target === 0) {
+            if (!solution.some(arr => String(arr) === String(temp))) {
+                solution.push(temp.slice())
+            }
+            
+            return
+        }
+        if (target < 0) return
+        
+        for (let i = start; i < candidates.length; i++){
+            temp.push(candidates[i])
+            curr = candidates.slice()
+            dfs(curr, target-candidates[i], temp, i+1)
+            temp.pop()
+        }
+        
+    }
+};
+
+
+var permute = function(nums) {
+    
+    let solution = []
+    dfs(nums, solution)
+    return solution
+
+    function dfs(nums, solution, temp = new Set()){
+  
+        if (temp.size === nums.length) {
+            solution.push([...temp])
+            return
+        }
+            
+        for (let value of nums) {
+            console.log(value)
+            if (temp.has(value)){
+                continue
+            }
+            
+            temp.add(value)
+            dfs(nums, solution, temp)
+            temp.delete(value)
+        }
+    }  
+    
+    
+};
