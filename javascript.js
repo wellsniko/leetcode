@@ -409,3 +409,85 @@ var permute = function(nums) {
     
     
 };
+
+
+// """
+// Given a binary tree, with characters as nodes, return the path from leaf node to root, but smallest alphabetically
+// for example, A is root, DEA, BAEA, BCA are all paths from leaf to the root A, but returns BCA because B comes DEA and BCA is shorter than BAEA
+// A
+//     / \
+// E   C
+//     / \  /
+// D  A B
+//     /
+//     B
+// Each node should have the property of:
+// -value
+// - left
+// - right
+
+
+var removeDuplicates = function(nums) {
+    if (nums.length < 2) return nums
+    
+    let i = 0
+    let k
+    while(i<nums.length-1){
+        k = i+1
+       
+        if (nums[i]=== nums[k]){
+            nums.splice(k, 1)
+        } else {
+            i++
+        }
+    }
+    
+    return nums.length 
+    
+};
+
+
+var removeDuplicates2 = function(nums) {
+
+    let i = 0
+    let k
+    let j
+    
+    while(i<nums.length-2){
+        k = i+1
+        j = i+2
+       
+        if (nums[i]=== nums[k] && nums[i]===nums[j]){
+            nums.splice(k, 1)
+        } else {
+            i++
+        }
+    }
+    
+    return nums.length 
+
+};
+
+
+var minFallingPathSum = function(matrix) {
+    
+    for (let i = 1; i<matrix.length;i++){
+        for (let j=0; j<matrix[i].length;j++){
+            let left = Infinity
+            let right = Infinity
+            if (j >= 1){
+                left = matrix[i-1][j-1]
+            }
+            if (j +1 < matrix[i].length){
+                right = matrix[i-1][j+1]
+            }
+            
+            let center = matrix[i-1][j]
+            
+            matrix[i][j] += Math.min(left, right, center)
+            
+        }
+    }
+    
+    return Math.min(...matrix[matrix.length-1]) 
+};
