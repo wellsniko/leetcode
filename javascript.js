@@ -491,3 +491,151 @@ var minFallingPathSum = function(matrix) {
     
     return Math.min(...matrix[matrix.length-1]) 
 };
+
+
+
+//memoization technique
+var change = function(amount, coins, memo = {}) {
+    let key = amount + '-' + coins;
+    if (key in memo) return memo[key];
+    if (amount === 0) return 1;
+    
+    let currentCoin = coins[coins.length-1]
+    let total = 0;
+    
+    for (let qty = 0; qty * currentCoin <= amount; qty++){
+        total += change(amount - qty * currentCoin, coins.slice(0, -1), memo);
+    }
+    
+    memo[key] = total;
+    return memo[key];
+};
+
+
+
+var minPathSum = function(grid) {
+    let m = grid.length
+    let n = grid[0].length
+    let table = new Array(m).fill().map(()=> new Array(n).fill(Infinity))
+    table[0][0] = grid[0][0]
+    
+    
+    for (let i = 0; i < grid.length; i++){
+        
+        for (let j = 0; j< grid[0].length; j++){
+            if (j < grid[0].length-1){
+              table[i][j+1] = Math.min(grid[i][j+1] + table[i][j], table[i][j+1])  
+            }
+            
+            if (i < grid.length-1) {
+              table[i+1][j] = Math.min(grid[i+1][j] + table[i][j], table[i+1][j])  
+            }
+            
+            
+        }
+    }
+    
+    return table[grid.length-1][grid[0].length-1]
+};
+
+
+
+var climbStairs = function(n) {
+    let table = new Array(n+1)
+    
+    table[0] = 1
+    table[1] = 1
+    
+    for (let i = 2; i < table.length; i++) {
+        table[i] = table[i-1] + table[i-2]
+    }
+    
+    return table[table.length-1]
+};
+
+
+
+
+
+
+
+
+
+
+const VOWELS = ['a', 'e', 'i', 'o', 'u'];
+
+let vowelCounter = function (array) {
+    object = {};
+    for (let i = 0; i < array.length; i++) {
+        object[array[i]] = 0;
+    }
+    return object
+}
+
+
+const mostFrequentVowel = function (words, counter = vowelCounter(VOWELS)) {
+    console.log(counter)
+    if (words.length === 0) {
+        let num = 0;
+        let ans = '';
+       for (let keys in counter) {
+           let values = counter[keys]
+           if (values > num) {
+               num = values
+               ans = keys;
+           }
+       }
+       
+        return ans;
+    }
+    animal = words.pop()
+    for (let i = 0; i < animal.length; i++) {
+        let letter = animal[i]
+        if (counter[letter] !== undefined) {
+            counter[letter]++
+        }
+    }
+    return mostFrequentVowel(words, counter)
+}
+
+// console.log(mostFrequentVowel(['dog', 'cow', 'pig', 'chicken', 'horse']));
+// console.log(mostFrequentVowel(['e', 'e', 'e', 'o', 'o', 'o', 'a', 'a', 'i'], { 'i': 1, 'e': 1 })); // 'i' or 'o'
+
+
+
+
+
+function eliminateType(arr) {
+    console.log("hi")
+    
+    // console.log("copy")
+    // console.log(copy)
+    let second = function (type, ansArray = [], copy = arr.slice()) {
+    //   console.log(arr)
+    // let copy = arr.slice()
+    console.log("hi")
+      if (copy.length === 0) {
+     
+        return ansArray
+      }
+      let end = copy[copy.length - 1]
+
+      if (typeof end !== type) {
+        ansArray.unshift(end)
+      }
+      console.log("ARR")
+      console.log(arr)
+      copy.pop()
+      return second (type, ansArray, copy)
+    }
+    console.log("hi")
+    return second
+}
+
+
+const eliminate = eliminateType([2, undefined, 'world', { color: 'red' }, true, 3, [4, 5], 'hello', false]);
+
+
+console.log(eliminate("number"))
+console.log("NEXT")
+console.log(eliminate("object"))
