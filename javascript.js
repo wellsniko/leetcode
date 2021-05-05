@@ -678,3 +678,86 @@ var firstUniqChar = function(s) {
     return -1
 };
 
+
+
+//! change
+var lengthOfLongestSubstring = function(s) {
+    if (s.length == 0) return '';
+    let memory = new Map();
+    let l = 0;
+    let max = 0;
+    // console.log(memory)
+    // growing window algorithm
+    // console.log([...s].entries([]))
+    for ([e,r] of [...s].entries()) {
+
+        if (memory.has(e)) {
+            // shrink left...
+            l = Math.max(l, memory.get(e) + 1);
+        }
+        // increase window
+            // console.log(memory)
+
+        memory.set(e, r);
+        if (r+1 - l > max) max = r+1 - l;
+    }
+        // console.log(memory)
+
+    return max;
+};
+
+// console.log(lengthOfLongestSubstring("abcabca"))
+
+
+var searchBST = function(root, val) {
+    if (!root) return null
+    if (root.val === val) return root
+    
+    if (root.val > val){
+        return searchBST(root.left, val)
+        
+    } else if (root.val < val){
+        return searchBST(root.right, val)
+    }
+    
+};
+
+
+var isValidBST = function(root, min, max) {
+    
+    if (!root) return true
+    
+    if (max !== undefined && root.val >=max){
+        return false
+    }
+    
+    if (min !== undefined && root.val <= min){
+        return false
+    }
+    
+    return isValidBST(root.left, min, root.val) && isValidBST(root.right, root.val, max)
+};
+
+
+var invertTree = function(root) {
+    if (!root) return root
+    let tempLeft
+    let tempRight
+    if (root.left) tempRight = root.left
+    if (root.right) tempLeft = root.right
+    
+    if (tempRight) {
+        root.right = tempRight
+        if (root.left === root.right) root.left = null
+    }
+    if (tempLeft) {
+        root.left = tempLeft
+        if (root.left === root.right) root.right = null
+    }
+    
+    invertTree(root.left)
+    invertTree(root.right)
+    
+    return root
+    
+};
