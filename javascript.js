@@ -559,83 +559,122 @@ var climbStairs = function(n) {
 
 
 
-
-
-
-const VOWELS = ['a', 'e', 'i', 'o', 'u'];
-
-let vowelCounter = function (array) {
-    object = {};
-    for (let i = 0; i < array.length; i++) {
-        object[array[i]] = 0;
-    }
-    return object
-}
-
-
-const mostFrequentVowel = function (words, counter = vowelCounter(VOWELS)) {
-    console.log(counter)
-    if (words.length === 0) {
-        let num = 0;
-        let ans = '';
-       for (let keys in counter) {
-           let values = counter[keys]
-           if (values > num) {
-               num = values
-               ans = keys;
-           }
-       }
-       
-        return ans;
-    }
-    animal = words.pop()
-    for (let i = 0; i < animal.length; i++) {
-        let letter = animal[i]
-        if (counter[letter] !== undefined) {
-            counter[letter]++
+var twoCitySchedCost = function(costs) {
+    // let newCost = costs.map((cost, i)=>{
+    //     return Math.min(cost[0], cost[1])
+    // })
+    
+    costs.sort((a,b) => (a[0]-a[1])- (b[0]-b[1]))
+    
+    let cost = 0
+    let n = costs.length/2
+    
+    for (let i=0; i<costs.length; i++){
+        if (i<n) {
+            cost+=costs[i][0]
+        } else {
+            cost +=costs[i][1]
         }
     }
-    return mostFrequentVowel(words, counter)
-}
-
-// console.log(mostFrequentVowel(['dog', 'cow', 'pig', 'chicken', 'horse']));
-// console.log(mostFrequentVowel(['e', 'e', 'e', 'o', 'o', 'o', 'a', 'a', 'i'], { 'i': 1, 'e': 1 })); // 'i' or 'o'
-
-
-
-
-
-function eliminateType(arr) {
-    console.log("hi")
     
-    // console.log("copy")
-    // console.log(copy)
-    let second = function (type, ansArray = [], copy = arr.slice()) {
-    //   console.log(arr)
-    // let copy = arr.slice()
-    console.log("hi")
-      if (copy.length === 0) {
-     
-        return ansArray
-      }
-      let end = copy[copy.length - 1]
+    return cost
+};
 
-      if (typeof end !== type) {
-        ansArray.unshift(end)
-      }
-      console.log("ARR")
-      console.log(arr)
-      copy.pop()
-      return second (type, ansArray, copy)
+
+var removeDuplicates = function(s, k) {
+    const stack = [];
+    
+    for(let char of s) {
+        if(stack.length && stack[stack.length-1][0] === char) {
+            stack[stack.length-1][1] += 1;
+            if(stack[stack.length-1][1] === k) {
+                stack.pop();
+            }
+        } else {
+            stack.push([char, 1]);
+        }
     }
-    console.log("hi")
-    return second
+    
+    let res = '';
+    
+    for(let [char, count] of stack) {
+        res += char.repeat(count);
+    }
+    
+    return res;
+};
+
+
+
+var removeDuplicatesOfKAmountInString = function(s, k) {
+    let stack = []
+    
+    for (let char of s){
+        if (stack.length && stack[stack.length-1][0] === char){
+            stack[stack.length-1][1]++
+            if (stack[stack.length-1][1]=== k){
+                stack.pop()
+            }
+        } else {
+          stack.push([char, 1])   
+        }
+        
+    }
+    
+    let solution = ""
+    stack.forEach(index =>{
+        solution+= index[0].repeat(index[1])
+    })
+    
+    return solution
+};
+
+var jump2 = function(nums) {
+    
+    let jumps = new Array(nums.length).fill(Infinity)
+    jumps[0] = 0
+    
+    for (let i = 1; i<jumps.length; i++){
+        for (let k = 0; k < i; k++){
+            if (jumps[k] !== Infinity && k + nums[k] >= i){
+                jumps[i] = Math.min(jumps[i], jumps[k] + 1)
+            }
+        }
+    }
+    console.log(jumps)
+    
+    return jumps[jumps.length-1]
 }
 
 
-const eliminate = eliminateType([2, undefined, 'world', { color: 'red' }, true, 3, [4, 5], 'hello', false]);
+var canReach = function(arr, start, visited = {}) {
+    if (arr[start] === undefined || visited[start]) return false
+    if (arr[start] === 0) return true
+    visited[start] = true
+      
+    return canReach(arr, start-arr[start], visited) || canReach(arr, start+arr[start], visited)
+    
+};
 
 
-console.log(eliminate("number"))
-console.log("NEXT")
-console.log(eliminate("object"))
+
+var firstUniqChar = function(s) {
+    let map = {}
+    
+    for (let i = 0; i<s.length; i++){
+        if (map[s[i]]){
+            map[s[i]]++
+        } else {
+            map[s[i]] = 1
+        }
+    }
+    
+    for (let i = 0; i<s.length; i++){
+        if (map[s[i]] === 1){
+            return i
+        }
+    }
+    
+    return -1
+};
+
