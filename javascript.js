@@ -761,3 +761,69 @@ var invertTree = function(root) {
     return root
     
 };
+
+
+
+var numIslands = function(grid) {
+    let answer = 0
+    function coverIsland(i, j){
+        if ( i >= 0 && i < grid.length && j >= 0 && j < grid[0].length && grid[i][j] === "1"){
+            grid[i][j] = "0"
+            coverIsland(i+1, j)
+            coverIsland(i, j+1)
+            coverIsland(i-1, j)
+            coverIsland(i, j-1)
+        }
+    }
+    
+    for (let i = 0; i < grid.length; i++){
+        for (let j = 0; j <grid[0].length; j++){
+            if (grid[i][j] === "1"){
+                answer+=1
+                
+                coverIsland(i, j)
+            }
+        }
+    }
+    
+    return answer
+};
+
+let colin = undefined
+let savio = undefined
+
+
+
+const configureStore = (preloadedState = {}) => (
+  createStore(RootReducer, preloadedState, applyMiddleware(thunk))
+);
+
+export default configureStore;
+
+
+
+
+var myPow = function(x, n) {
+    if (n === 0) return 1
+    if (n === 1) return x
+    
+    if (n > 0) {
+
+        
+        if (n % 2 === 0){
+            let result = myPow(x, n/2)
+            return result * result
+        } else {
+            return x * myPow(x, n-1)
+        }
+        
+    } else if (n < 0){
+        if (n % 2 === 0){
+            let result = myPow(x, n/2)
+            return result * result
+        } else {
+            return myPow(x, n+1)/x 
+        }
+        
+    }
+};
