@@ -827,3 +827,140 @@ var myPow = function(x, n) {
         
     }
 };
+
+
+function listNodeAdd(l1, l2){
+	let first = new ListNode()
+	let curr = first
+	let sum = 0
+	while (l1 || l2 || sum > 0){
+	if (l1){
+	    sum+= l1.val
+	    L1 = l1.next
+    }
+    if (l2){
+	sum+= l2.val
+	l2 = l2.next
+}
+    curr.next = new ListNode(sum % 10)
+    curr = curr.next
+    sum = Math.floor(sum/10)
+}
+	return first.next	
+}
+
+
+var mergeInBetween = function(list1, a, b, list2) {
+    let index = 1
+    let sentinel = new ListNode(0,list1)
+    let nodeA = list1
+	let nodeB = list1
+    while(index<a){
+        nodeA = nodeA.next
+        index++
+    }
+    index = -1
+    while(index<b){
+        nodeB = nodeB.next
+        index++
+    }
+
+    nodeA.next = list2
+    getLastIndex(list2).next = nodeB
+    return sentinel.next
+};
+
+function getLastIndex(node) {
+    let outputNode = node
+    while(outputNode.next !== null){
+        outputNode = outputNode.next
+    }
+    return outputNode
+};
+
+
+
+var maxDepth = function(s) {
+    if (s.length <= 1) return 0;
+    
+    //use a stack, put only left parentheses in, keep track of how deep you are based on length of the stack
+    //if you see the other direction, pop one off the stack
+    
+    let solution = 0
+    
+    let stack = []
+    
+    for (char of s){
+        char === "(" ? stack.push(char) : null
+        stack.length > solution ? solution = stack.length : null
+        char === ")" ? stack.pop() : null
+    }
+    
+    return solution
+};
+
+
+var allPathsSourceTarget = function(graph) {
+    //dfs
+    //collection of arrays, until the last index equals the last number index (array[array.length-1] === graph[graph.length -1])
+    // recursive, start with an array of [0], and run recursively on each number, then go to that index (store index in args of dfs)
+    // check to see if the index was already visited and only go to unvisited.  if you get to an index with no length, return nothing
+    // dfs args = (graph[idx], visited, target)
+    //visited will already be in the path
+    
+    //could possibly put visited indexes to null with dynamic programming
+    if (!graph) return []
+    
+    
+    let solution = []
+    dfs([0], graph[0], graph.length-1)
+    return solution
+    
+    function dfs(path, options, target){
+ 
+        if (path[path.length-1] === target){
+            let ans = path.slice()
+            solution.push(ans)
+            
+            return
+        }
+        
+        //mutating weirdly
+        options.forEach(step =>{
+            if (!path.includes(step)) {
+                path.push(step)
+                dfs(path, graph[step], target)
+                path.pop()
+            }
+        })
+        
+    }
+};
+
+var copyRandomList = function(head) {
+    //go through every old Node and set a copiecat with the same val
+    // keep track of newHead
+    //go through every oldNode again and set the copy's values to its copys
+    if (!head) return null
+    newHead = new Node(head.val)
+    
+    head.copyCat = newHead
+    oldNode = head.next
+    while (oldNode){
+        oldNode.copyCat = new Node(oldNode.val)
+        oldNode = oldNode.next
+    }
+    
+    oldNode = head
+
+    while (oldNode){
+        oldNode.next ? oldNode.copyCat.next = oldNode.next.copyCat : oldNode.copyCat.next = null
+        oldNode.random ? oldNode.copyCat.random = oldNode.random.copyCat : oldNode.copyCat.random = null
+        oldNode = oldNode.next
+    }
+    
+    
+    return newHead
+    
+    
+};
