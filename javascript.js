@@ -789,18 +789,6 @@ var numIslands = function(grid) {
     return answer
 };
 
-let colin = undefined
-let savio = undefined
-
-
-
-const configureStore = (preloadedState = {}) => (
-  createStore(RootReducer, preloadedState, applyMiddleware(thunk))
-);
-
-export default configureStore;
-
-
 
 
 var myPow = function(x, n) {
@@ -963,4 +951,375 @@ var copyRandomList = function(head) {
     return newHead
     
     
+};
+
+
+var isValid = function(s) {
+    
+    let stack = []
+    for (let char of s){
+        if (char === "(" || char === "[" || char === "{") stack.push(char);
+        
+        if (char === ")" ){
+            if (stack[stack.length-1] !== "(") {
+                return false
+            } else {
+                stack.pop()
+            }
+        }
+        
+        if (char === "]" ){
+            if (stack[stack.length-1] !== "[") {
+                return false
+            } else {
+                stack.pop()
+            }
+        }
+        
+        if (char === "}" ){
+            if (stack[stack.length-1] !== "{") {
+                return false
+            } else {
+                stack.pop()
+            }
+        }
+    }
+    
+    
+    return stack.length === 0
+};
+
+
+var merge = function(intervals) {
+    intervals.sort((a, b)=> a[0]-b[0])
+    let solution = []
+
+    for (let i = 0; i<intervals.length; i++){
+        let curr = intervals[i]
+        if (i === 0){
+            solution.push(curr)
+            continue;
+        } 
+        let prev= solution[solution.length-1]
+        
+        if (prev[1]>=curr[0]){
+            prev[1] = Math.max(prev[1], curr[1])
+        } else {
+            solution.push(curr)
+        }
+    }
+    
+    return solution
+};
+
+var subsets = function(nums) {
+    let solution = []
+    dfs([], 0, nums)
+    
+    return solution
+    
+    function dfs(curr, index, nums){
+        let copy = curr.slice()
+        solution.push(copy)     
+        
+        for (let i = index; i<nums.length; i++){        
+            curr.push(nums[i])
+            dfs(curr, i+1, nums)
+            curr.pop()
+        }
+    
+        return
+    }
+};
+
+
+var isPalindrome = function(s) {
+    let array = []
+    let alphabet = "abcdefghijklmnopqrstuvwxyz"
+    
+    for (let char of s){
+        if (alphabet.includes(char.toLowerCase())){
+            array.push(char.toLowerCase())
+        }
+    }
+    
+    console.log(array)
+  
+    let arrayR = array.reverse()
+    console.log(arrayR)
+    console.log(array == arrayR)
+    return array.join("") === arrayR.join("")
+    
+
+};
+
+var isAnagram = function(s, t) {
+    let map = {}
+    for (let char of s){
+        map[char] ? map[char]++ : map[char] = 1
+    }
+    
+    for (let char of t){
+        if (map[char] || map[char] === 0){
+            map[char]--
+        } else {
+            return false
+        }
+    }
+    
+    return Object.values(map).every(val => val === 0)
+};
+
+
+var invalidTransactions = function(transactions) {
+    transactions = transactions.map(trans => trans.split(","))
+    let solution = []
+    
+    for (let i = 0; i<transactions.length; i++){
+        if (parseInt(transactions[i][2])>1000){
+            solution.push(transactions[i].join(","))
+            continue
+        }
+        for (let k = 0; k<transactions.length; k++){
+            
+            if (k !== i && transactions[i][0] === transactions[k][0] && transactions[k][3] !== transactions[i][3]){
+                let difference = parseInt(transactions[i][1])-parseInt(transactions[k][1])
+                if (difference <= 60 && difference >= -60 && transactions[i][0]){
+                    solution.push(transactions[i].join(","))
+                    break
+                }
+                            
+            }
+
+        }
+    }
+    
+    return solution
+
+};
+
+var addTwoNumbers = function(l1, l2) {
+    let reversed1 = reverseList(l1)
+    let reversed2 = reverseList(l2)
+    
+    let sum = 0
+    let sentinalNode = new ListNode(25)
+    let oldNode = sentinalNode
+
+    while(reversed1 || reversed2 || sum > 0){
+        if (reversed1){
+            sum+=reversed1.val
+            reversed1 = reversed1.next
+        }
+        if (reversed2){
+            sum+=reversed2.val
+            reversed2 = reversed2.next
+        }
+        console.log(sum)
+        newNode = new ListNode(sum%10)
+        oldNode.next = newNode
+        oldNode = newNode
+        sum=Math.floor(sum/10)
+        
+    }
+    
+    
+    let correct = sentinalNode.next
+    
+    sentinalNode.next = null
+    
+    return reverseList(correct)
+    
+    
+    function reverseList(list){
+        if (!list.next || !list) return list
+        let prev = list
+        
+        let nextNode = prev.next
+        prev.next = null
+        
+        while (nextNode.next){
+            let tempHead = nextNode.next
+            nextNode.next = prev
+            prev = nextNode
+            nextNode = tempHead
+        }
+        nextNode.next = prev
+        return nextNode
+        
+    }
+};
+
+
+var topKFrequent = function (words, k) {
+    let map = {}
+
+    words.forEach(word => {
+        map[word] ? map[word]++ : map[word] = 1
+    })
+
+    let sorted = Object.entries(map).sort((a, b) => {
+        if (b[1] === a[1]) {
+            return a[0] > b[0] ? 1 : -1
+        }
+        return b[1] - a[1]
+
+    })
+    let solution = []
+    let i = 0
+    console.log(sorted)
+    while (i < k) {
+        solution.push(sorted[i][0])
+        i++
+    }
+
+    return solution
+};
+
+var UndergroundSystem = function() {
+    this.checkIns = new Map()
+    this.averageTimes = new Map()
+};
+
+/** 
+ * @param {number} id 
+ * @param {string} stationName 
+ * @param {number} t
+ * @return {void}
+ */
+UndergroundSystem.prototype.checkIn = function(id, stationName, t) {
+    this.checkIns.set(id, {stationName, time: t})
+};
+
+/** 
+ * @param {number} id 
+ * @param {string} stationName 
+ * @param {number} t
+ * @return {void}
+ */
+UndergroundSystem.prototype.checkOut = function(id, stationName, t) {
+    const averageTimes = this.averageTimes
+    const checkIn = this.checkIns.get(id)
+
+    const key = `${checkIn.stationName} - ${stationName}`
+    
+    
+    if (averageTimes.has(key)){
+        averageTimes.set(key, {
+            total: averageTimes.get(key).total + t - checkIn.time,
+            count: averageTimes.get(key).count + 1
+        })
+        
+    } else {
+        averageTimes.set(key, {total: t - checkIn.time, count:1})
+    }
+
+};
+
+/** 
+ * @param {string} startStation 
+ * @param {string} endStation
+ * @return {number}
+ */
+UndergroundSystem.prototype.getAverageTime = function(startStation, endStation) {
+    let key = `${startStation} - ${endStation}`
+    const value = this.averageTimes.get(key)
+
+    return value.total/value.count
+};
+
+
+var RandomizedSet = function() {
+    this.map = new Map()    
+};
+
+/**
+ * Inserts a value to the set. Returns true if the set did not already contain the specified element. 
+ * @param {number} val
+ * @return {boolean}
+ */
+RandomizedSet.prototype.insert = function(val) {
+    
+    if (this.map.has(val)){
+        return false
+    } else {
+        this.map.set(val, val)
+        return true
+    }
+    
+};
+
+/**
+ * Removes a value from the set. Returns true if the set contained the specified element. 
+ * @param {number} val
+ * @return {boolean}
+ */
+RandomizedSet.prototype.remove = function(val) {
+    if (this.map.has(val)){
+        this.map.delete(val)
+        return true
+    } else {
+        return false
+    }
+};
+
+/**
+ * Get a random element from the set.
+ * @return {number}
+ */
+RandomizedSet.prototype.getRandom = function() {
+    let randomIdx = Math.floor(Math.random() * this.map.size)
+    let keys = [...this.map.keys()]
+    return this.map.get(keys[randomIdx])
+};
+
+
+
+function minimizeCost(numPeople, x, y) {
+    // Write your code here
+    console.log(numPeople)
+    let xArray = Array(Math.max(...x)).fill(null)
+    let yArray = Array(Math.max(...y)).fill(null)
+    
+    let newX = xArray.map((space, index)=>{
+        let sum = 0
+        for (let i = 0; i< x.length; i++){
+            
+            sum += numPeople[i] * Math.abs(x[i]-(index+1))
+            
+            
+        }
+        
+        return sum
+    })
+    
+    let newY = yArray.map((space, index)=>{
+        let sum = 0
+        for (let i = 0; i< y.length; i++){
+            
+            sum += numPeople[i] * Math.abs(y[i]-(index+1))
+            
+            
+        }
+        return sum
+        
+    })
+        return Math.min(...newX) + Math.min(...newY)
+}
+
+
+
+
+var coinChange = function(coins, amount) {
+    let numCoins = new Array(amount+1).fill(Infinity)
+    numCoins[0]= 0
+    
+    for (let coin of coins){
+        for (let i = 0; i < numCoins.length; i++){
+            if (coin > i) continue
+            numCoins[i] = Math.min(numCoins[i], numCoins[i-coin]+1)
+        }
+    }
+    
+    return numCoins[numCoins.length -1] === Infinity ? -1 : numCoins[numCoins.length-1]
 };
