@@ -1335,3 +1335,148 @@ var smallestFromLeaf = function(root, parent="") {
     const rightSmallest = smallestFromLeaf(root.right, char + parent);
     return leftSmallest < rightSmallest ? leftSmallest : rightSmallest;   
 };
+
+
+
+
+//product from root to leaf
+		// 			1
+				
+		// 	2 				3
+			
+	// 6		2		4		1
+ 
+	// 							   4
+class Node {
+    constructor(val, parent=null){
+        this.val = val
+        this.parent = parent
+        this.left = null
+        this.right = null 
+    }
+}
+
+
+
+    
+    
+    
+function binaryProduct(root, target){
+    let count = 0
+    dfs(root, root.val, [root.val])
+    return count
+         
+    function dfs(node, product, visited){
+
+        while (product > target || product === 0){
+            product/=visited.shift()
+        }
+            
+        if (product === target) {
+            count++
+        }
+        
+            
+        if (node.left){
+            let newVisited = visited.slice()
+            newVisited.push(node.left.val)
+            dfs(node.left, product * node.left.val, newVisited)
+        }
+            
+        if (node.right){
+            let newVisited2 = visited.slice()
+            newVisited2.push(node.right.val)
+            dfs(node.right, product * node.right.val, newVisited2)
+        }
+            
+            
+        while (product >= target || product === 0){
+            product/=visited.shift()
+            if (product === target) count++
+        }
+            
+            
+    } 
+}
+    
+    // array.push(node.val)
+    // n >= 0
+    // if product is greater than target, array.shift()
+    // 
+    
+    
+    		// 	    0
+				
+		// 	2 				1
+			
+	// 6		2		4		1
+ 
+	// 							   12
+    
+    //sample output = 4
+    
+let node1 = new Node(0)
+let node2 = new Node(2)
+let node3  = new Node(1)
+let node4 = new Node(6)
+let node5 = new Node(2)
+let node6 = new Node(4)
+let node7  = new Node(1)
+let node8 = new Node(12)
+    
+node1.left = node2
+node1.right = node3
+node2.left = node4
+node2.right = node5
+node3.left = node6
+node3.right = node7    
+node7.right = node8
+    
+    //   a 10
+    // b 2  c 3
+   
+    
+console.log(binaryProduct(node1, 12))
+
+
+
+
+
+// word search
+
+var exist = function(board, word) {
+    let starts = findFirstLetter(word[0])
+    
+    for (let s = 0; s<starts.length; s++){
+        if (search(starts[s][0], starts[s][1], word, board)) return true
+    }
+    
+    function findFirstLetter(letter){
+        let starts = []
+        
+        for (let i = 0; i<board.length; i++){
+            for (let k = 0; k<board[0].length; k++){
+                if (board[i][k] === letter) starts.push([i,k])
+            }
+        }
+        return starts
+    }
+    
+    return false
+    
+};
+
+function search(row, col, word, board){
+    if (board[row][col] !== word[0]) return false
+    if (word.length === 1) return true
+    let temp = board[row][col]
+    board[row][col] = null
+        
+    if (row > 0 && search(row-1, col, word.slice(1), board)) return true
+    if (col > 0 && search(row, col-1, word.slice(1), board)) return true
+    if (row +1 < board.length && search(row+1, col, word.slice(1), board)) return true
+    if (col + 1 < board[0].length && search(row, col+1, word.slice(1), board)) return true
+    board[row][col]= temp
+        
+}
+        
