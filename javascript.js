@@ -1479,4 +1479,181 @@ function search(row, col, word, board){
     board[row][col]= temp
         
 }
+
+
+///BST Iterator smallest in line
+
+var BSTIterator = function(root) {
+        this.stack = []
+        this.smallest = null
+        let temp = root
         
+        while(temp){
+            this.stack.push(temp)
+            this.smallest = temp.val
+            temp = temp.left
+        }
+    
+};
+
+/**
+ * @return {number}
+ */
+BSTIterator.prototype.next = function() {
+   if (this.hasNext) {
+       let node = this.stack.pop()
+       this.smallest = node.val
+       let temp = node.right
+       while (temp){
+           this.stack.push(temp)
+           temp = temp.left
+       }
+   }
+    
+    return this.smallest
+};
+
+/**
+ * @return {boolean}
+ */
+BSTIterator.prototype.hasNext = function() {
+    return this.stack.length > 0
+
+};
+        
+
+
+
+//! merge linked lists
+var mergeKLists = function(lists) {
+  
+    function merge(l1, l2){
+        if (!l1 || !l2) return l1 || l2
+        let node = {}
+        let fakeNode = node
+        let temp = null
+        
+        while (l1 && l2){
+            if (l1.val < l2.val){
+                node.next = l1
+                temp = l1
+                l1 = l1.next
+                temp.next = null
+                node = node.next
+            } else {
+                node.next = l2
+                temp = l2
+                l2 = l2.next
+                temp.next = null
+                node = node.next
+            }
+        }
+        
+        if (l1) node.next = l1
+        if (l2) node.next = l2
+        
+        return fakeNode.next
+        
+    }
+    
+    let root = lists[0]
+    
+    for (let i = 1; i< lists.length; i++){
+        root = merge(root, lists[i])
+    }
+    
+
+    return root || null
+};
+
+
+//permutation II
+
+var permuteUnique = function(nums) {
+    nums.sort((a,b)=> a-b)
+    let solution = []
+    dfs([], {})
+    return solution
+    
+    function dfs(curr, visited){
+        if (curr.length === nums.length){
+            solution.push(curr.slice())
+            return
+        }
+        
+        for (let i = 0; i < nums.length; i++){
+            if (visited[i]) continue
+            
+            visited[i] = true
+            curr.push(nums[i])
+            dfs(curr, visited)
+            visited[i] = false
+            curr.pop()
+            
+            while (nums[i] === nums[i+1]) i++ 
+        }
+    }
+};
+
+
+// combination sum 3
+
+var combinationSum3 = function(k, n) {
+    let solution = []
+    
+    dfs([],1,0)
+
+    return solution
+    
+    function dfs(curr, num, sum){
+        if (sum === n && curr.length === k){
+            solution.push(curr.slice())
+            return
+        }
+        
+        
+        for (let i = num; i < 10; i++ ){
+            
+            curr.push(i)
+            sum+=i
+            dfs(curr, i+1, sum)
+            sum-=i
+            curr.pop()
+        }
+        
+    }
+};
+
+
+
+//check if number is sum of distinct powers of 3
+
+var checkPowersOfThree = function(n) {
+    
+    while (n !== 0){
+        if (n % 3 === 0){
+            n = n / 3
+        } else if (n % 3 === 1){
+            n = (n-1) / 3
+        } else {
+            return false
+        }
+    }
+    return true
+};
+
+// binary tree biggest sum path -- hard
+
+var maxPathSum = function(root) {
+    const maxSum = (root) => {
+        if(!root) return 0;
+        let lsum = Math.max(maxSum(root.left), 0);
+        let rsum = Math.max(maxSum(root.right), 0);
+        let curr = lsum + rsum + root.val;
+        sum = Math.max(sum, curr);
+        return root.val + Math.max(lsum, rsum);
+    };
+    let sum = -Infinity
+    maxSum(root);
+    return sum;
+};
