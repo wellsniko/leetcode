@@ -402,7 +402,7 @@ var permute = function(nums) {
             }
             
             temp.add(value)
-            dfs(nums, solution, temp)
+            dfs(nums, solution, temp)               
             temp.delete(value)
         }
     }  
@@ -1656,4 +1656,231 @@ var maxPathSum = function(root) {
     let sum = -Infinity
     maxSum(root);
     return sum;
+};
+
+
+// asteroid collision
+var asteroidCollision = function(asteroids) {
+    const stack = []
+    
+    for (let i = 0; i < asteroids.length; i++) {
+        const curr = asteroids[i]
+        
+        if (curr > 0) {
+            stack.push(curr)
+        } else if (!stack.length) {
+            stack.push(curr)
+        } else {
+            let last = stack[stack.length-1]
+            while ((Math.abs(curr) > Math.abs(last)) && (last > 0)) {
+                stack.pop()
+                last = stack[stack.length-1]
+            }
+            if ((curr + last) === 0) {
+                stack.pop()
+            } else if (!stack.length || (last < 0)) {
+                stack.push(curr)
+            }
+        }
+    }
+    
+    return stack
+};
+
+
+var constructMaximumBinaryTree = function(nums) {
+    if (!nums.length) return null
+    let biggest = Math.max(...nums)
+    
+    let bigIdx = nums.indexOf(biggest)
+    let left = constructMaximumBinaryTree(nums.slice(0, bigIdx))
+    let right = constructMaximumBinaryTree(nums.slice(bigIdx+1))
+    return new TreeNode(biggest,left, right)
+};
+
+
+
+//sliding window method
+var maximumUniqueSubarray = function(nums) {
+    let set = new Set()
+    let sum = 0
+    let res = 0
+    let l = 0
+    let r = 0
+    
+    while(l<nums.length && r < nums.length){
+        if (!set.has(nums[r])){
+            set.add(nums[r])
+            sum+=nums[r]
+            res = Math.max(sum, res)
+            r++
+        } else {
+            sum-=nums[l]
+            set.delete(nums[l])
+            l++
+        }
+    }
+    
+    return res
+};
+
+
+/// dynamic programming
+var uniquePaths = function(m, n) {
+ 
+    const table = [...new Array(m)].map(_ => new Array(n).fill(0));
+    table[0][0]= 1
+    
+    for (let i = 0; i < table.length; i++){
+        for (let k= 0; k<table[i].length; k++){
+
+            let top = 0
+            let left = 0
+            if (i !== 0){
+             top = table[i-1][k]   
+            }
+            if (k !== 0){
+              left = table[i][k-1]  
+            }
+            
+            table[i][k]+= (left+top)
+            
+        }
+    }
+    
+    return table[table.length-1][table[0].length-1]
+};
+
+var pathSum = function(root, targetSum) {
+    
+    if (!root) return []
+    let res = []
+    
+    dfs(root, root.val, [root.val])
+    
+    return res
+    
+    function dfs(node, sum, curr){
+        if (!node.left && !node.right && sum === targetSum){
+            res.push(curr)
+            return
+        }
+        
+        if (node.left){
+            dfs(node.left, sum+node.left.val, curr.concat(node.left.val))
+        }
+        
+        if (node.right){
+            dfs(node.right, sum+node.right.val, curr.concat(node.right.val))
+        }
+        
+    }
+};
+
+
+//pathSum III
+
+var pathSum = function(root, targetSum) {
+    
+    if (!root) return 0
+    let count = 0
+    dfs(root, root.val)
+    
+    return count + pathSum(root.left, targetSum) + pathSum(root.right, targetSum)
+    
+    function dfs(node, sum){
+        
+        if ( sum === targetSum){
+            count++   
+        }
+        
+        if (node.left){
+            dfs(node.left, sum+node.left.val)
+        }
+        if (node.right){
+            dfs(node.right, sum+node.right.val)
+        }   
+    }
+    
+};
+
+
+
+
+///unique paths with obstacles
+
+var uniquePathsWithObstacles = function(obstacleGrid) {
+
+    if (obstacleGrid[0][0] === 1) return 0
+    for (let i = 0; i<obstacleGrid.length; i++){
+        for (let k= 0; k<obstacleGrid[0].length; k++){
+            if (obstacleGrid[i][k]=== 1){
+                obstacleGrid[i][k]= false
+            }
+        }
+    }
+    
+    obstacleGrid[0][0] = 1
+    for (let i = 0; i<obstacleGrid.length; i++){
+        for (let k= 0; k<obstacleGrid[0].length; k++){
+            if (obstacleGrid[i][k]=== false) continue
+            let left = 0
+            let top = 0
+            if (i >0){
+                top = obstacleGrid[i-1][k]
+            }
+            if (k>0){
+                left = obstacleGrid[i][k-1]
+            }
+            
+            obstacleGrid[i][k]+=left+top
+        }
+    }
+    
+    
+    return obstacleGrid[obstacleGrid.length-1][obstacleGrid[0].length-1]
+};
+
+//uniqe paths in 4 directions with obstacles (need to hit every empty point)
+var uniquePathsIII = function(grid) {
+    if (!grid || grid.length === 0) return 0
+    
+    const dirs = [[0,1], [1,0], [-1, 0], [0, -1]]
+    let res = 0
+    let start
+    let end
+    let height = grid.length
+    let width = grid[0].length
+    let totalZ = 0
+    
+    for (let i = 0; i < height; i++){
+        for (let k = 0; k < width; k++){
+            if (grid[i][k] === 1) start = [i,k]
+            if (grid[i][k] === 2) end = [i,k]
+            if (grid[i][k] === 0) totalZ++
+        }
+    }
+    
+    function goFind(row, col, count){
+        if (grid[row][col]=== -1 || grid[row][col]=== Infinity) return 
+        
+        if (end[0]=== row && end[1]=== col){
+            if (count === totalZ+1) res++
+            return
+        }
+        
+        grid[row][col] = Infinity 
+
+        for (const [di, dj] of dirs) {    
+            const i = row + di;
+            const j = col + dj;
+            if (i < 0 || i >= height || j < 0 || j >= width) continue;
+            goFind(i, j, count + 1);
+        }
+
+        grid[row][col]= 0
+    }
+    
+    goFind(start[0], start[1], 0) 
+    return res
 };
