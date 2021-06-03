@@ -1884,3 +1884,130 @@ var uniquePathsIII = function(grid) {
     goFind(start[0], start[1], 0) 
     return res
 };
+
+//binary path - used BFS with queue
+var shortestPathBinaryMatrix = function(grid) {
+    let len = grid.length
+    if (grid[0][0] === 1 || grid[len-1][len-1]===1) return -1
+    let dirs = [[0,1],[1,0],[-1,-1],[1,1], [0,-1], [-1,0], [1,-1], [-1,1]]
+
+    let q = [[0,0, 1]]
+    grid[0][0] = 1
+    for (const [row, col, d] of q){
+
+        if (row === len-1 && col === len-1) return d
+        for (const [x,y] of dirs){
+            let i = row + x
+            let k = col + y
+            if (i > -1 && i < len && k > -1 && k < len && grid[i][k]=== 0){
+                grid[i][k]=1
+                q.push([i, k, d+1])
+
+            }
+        }
+    }
+    
+    return -1
+};
+
+
+
+//! Magic Dictionary 65-90+% time, 90+% space with simple array
+/**
+ * Initialize your data structure here.
+ */
+var MagicDictionary = function() {
+    this.words = []
+};
+
+/** 
+ * @param {string[]} dictionary
+ * @return {void}
+ */
+MagicDictionary.prototype.buildDict = function(dictionary) {
+    this.words = this.words.concat(dictionary)
+};
+
+/** 
+ * @param {string} searchWord
+ * @return {boolean}
+ */
+MagicDictionary.prototype.search = function(searchWord) {
+    
+    for (let i = 0; i < this.words.length; i++){
+        let wrongL = 0
+        for (let k = 0; k < this.words[i].length; k++ ){
+            if (this.words[i].length !== searchWord.length) break
+            if (this.words[i][k] !== searchWord[k]) wrongL++
+        }
+        if (wrongL === 1) return true
+    }
+    
+    return false
+};
+
+/** 
+ * Your MagicDictionary object will be instantiated and called as such:
+ * var obj = new MagicDictionary()
+ * obj.buildDict(dictionary)
+ * var param_2 = obj.search(searchWord)
+ */
+
+
+//! (-2*1) + (-1*2) + (1*3) + (6*4)
+var maxSatisfaction = function(satisfaction) {
+    satisfaction.sort((a,b)=> a-b)
+    let max = satisfaction.reduce((a,b,i)=> a + b * (i+1))
+    let sum = satisfaction.reduce((a,b)=> a+b, 0)
+    
+    for (let i = 0; i < satisfaction.length; i++){
+        if (max > max-sum) return max
+        max-=sum
+        sum-=satisfaction[i]
+    }
+    
+    return 0
+};
+
+
+// swimming in rising water
+var swimInWater = function(grid) {
+    let visited = new Set()
+    let time = 0
+    let n = grid.length;
+    let dirs = [[-1,0], [0,-1], [0,1],[1,0]];
+    
+    const dfs = (r, c) => {
+        if(r < 0 || r > n -1 || c < 0 || c > n -1 || time < grid[r][c] || visited.has(r*n + c)) return;
+        visited.add(r * n + c);
+        for(let [rr, cc] of dirs) 
+            dfs(r + rr, c + cc);
+    };
+    
+    while(!visited.has(n * n-1)) {
+        visited.clear();
+        dfs(0,0);
+        time++;
+    }
+    
+    return time-1;
+};
+
+
+//*Trap rain water -- used DP
+var trap = function(height) {
+    let res = 0, len = height.length, maxLeft = new Array(len), maxRight = new Array(len)
+    maxLeft[0]= height[0]
+    maxRight[len-1]= height[len-1]
+    
+    for (let i = 1; i < len; i++){
+        maxLeft[i]= Math.max(maxLeft[i-1], height[i])
+        maxRight[len-i-1]= Math.max(maxRight[len-i], height[len-i-1])
+    }
+
+    for (let i = 1; i < len; i++){
+        res+=Math.min(maxRight[i], maxLeft[i])- height[i]
+    }
+    
+    return res
+};
