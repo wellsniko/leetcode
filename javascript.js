@@ -990,6 +990,7 @@ var isValid = function(s) {
 };
 
 
+// mergeInterval method 1 
 var merge = function(intervals) {
     intervals.sort((a, b)=> a[0]-b[0])
     let solution = []
@@ -1008,9 +1009,25 @@ var merge = function(intervals) {
             solution.push(curr)
         }
     }
-    
     return solution
 };
+
+//mergeInterval method 2
+var merge = function(intervals) {
+    intervals.sort((a,b)=> a[0]-b[0])
+    
+    for (let i = 0; i < intervals.length-1; i++){
+        while (intervals[i+1] && intervals[i][1]>=intervals[i+1][0]){
+            intervals[i]= [intervals[i][0], Math.max(intervals[i][1], intervals[i+1][1])]
+            intervals.splice(i+1, 1)
+        }
+    }
+    
+    return intervals
+};
+//
+
+
 
 var subsets = function(nums) {
     let solution = []
@@ -2010,4 +2027,324 @@ var trap = function(height) {
     }
     
     return res
+};
+
+
+
+//*Word ladder - hard difficulty.. solved with BFS and queue
+var ladderLength = function(beginWord, endWord, wordList2) {
+    const alphabet = "abcdefghijklmnopqrstuvwxyz"
+    const wordList = new Set(wordList2)
+    const map = new Map()
+    let steps = 1
+    let queue = [beginWord]
+    let set = new Set()
+    
+    while (queue.length){
+        let next = []
+        for (let word of queue){
+            if (word === endWord) return steps
+            let word2 = word.split("")
+
+            for (let i = 0; i < word2.length; i++){
+                for (let char of alphabet){
+                    word2[i]=char
+                    let nw = word2.join("")
+
+                    if (wordList.has(nw) && !set.has(nw)){
+                        next.push(nw)
+                        set.add(nw) 
+                    } 
+                    word2[i]= word[i]   
+                }
+            }
+        }
+        steps++
+        queue=next
+    }
+    
+    return 0
+};
+
+
+// Candy Crush
+var candyCrush = function(board) {
+    let set = findElims(board)
+    if (set.size === 0 ) return board
+        set.forEach(num=>{
+            let row
+            let col
+            if (num<board[0].length){
+                row = 0
+                col = num
+            } else {
+                row = Math.floor(num/board[0].length)
+                col = num%board[0].length
+            }
+            
+            board[row][col]=0
+        })
+
+    let myNew = dropCandy(board)
+    return candyCrush(myNew)
+    // return myNew
+};
+
+
+function dropCandy(board){
+    
+    let trans = _.zip(...board)
+    let fixed = trans.map(col=>{
+        let newCol = col.filter(num => num !== 0)
+        while (newCol.length !== board.length){
+            newCol.unshift(0)
+        }
+
+        return newCol
+    })
+    
+    let myThing = _.zip(...fixed)
+    return myThing
+}
+
+
+function findElims(board){
+    let set = new Set()
+    
+    for (let row = 0; row<board.length; row++){
+        for (let col = 0; col<board[0].length; col++){
+            if (board[row][col]=== 0) continue
+            let adder=1
+            let curr = [row * board[0].length + col]
+            while(col < board[0].length && board[row][col+adder]=== board[row][col]){
+                curr.push((row * board[0].length) +col+adder)
+                adder++
+            }
+            
+            if (curr.length >=3){
+                 curr.forEach(num=> set.add(num))
+            }
+            curr = [row * board[0].length + col]
+            adder=1
+            while(row+adder < board.length && board[row+adder][col]=== board[row][col]){
+                curr.push(((row+adder) * board[0].length) +col)
+                adder++
+            }
+            if (curr.length >=3){
+                 curr.forEach(num=> set.add(num))
+            }
+
+        }
+    }
+    
+  
+    return set
+    
+}
+
+
+
+//* Design Browser History
+
+/**
+ * @param {string} homepage
+ */
+var BrowserHistory = function(homepage) {
+    this.history = {0: homepage}
+    this.current = 0
+    this.length = 1
+};
+
+/** 
+ * @param {string} url
+ * @return {void}
+ */
+BrowserHistory.prototype.visit = function(url) {
+    if (this.current === this.length-1){
+        this.history[this.length]=url
+        this.current = this.length++
+    } else {
+        this.history[++this.current]=url
+        this.length = this.current+1
+    }
+
+};
+
+/** 
+ * @param {number} steps
+ * @return {string}
+ */
+BrowserHistory.prototype.back = function(steps) {
+    if (steps > this.current){
+        this.current = 0
+        return this.history[0]
+    } else {
+        this.current = this.current - steps
+        return this.history[this.current]
+    }
+};
+
+/** 
+ * @param {number} steps
+ * @return {string}
+ */
+BrowserHistory.prototype.forward = function(steps) {
+    if (this.current+ steps >= this.length){
+        this.current = this.length-1
+        return this.history[this.current]
+    } else {
+        this.current = this.current + steps
+        return this.history[this.current]
+    }
+};
+
+/** 
+ * Your BrowserHistory object will be instantiated and called as such:
+ * var obj = new BrowserHistory(homepage)
+ * obj.visit(url)
+ * var param_2 = obj.back(steps)
+ * var param_3 = obj.forward(steps)
+ */
+
+//* flatten binary tree to linked list
+var flatten = function(root) {
+    if (!root) return null
+    let temp = root.right
+    root.right = flatten(root.left)
+    root.left = null
+    let last = root
+
+    while (last.right){
+        last = last.right
+    }
+    
+    last.right = flatten(temp)
+    return root
+};
+
+
+//flatten binary tree to linked list -- with dfs & stack
+
+var flatten = function(root) {
+    if (!root) return null
+    let stack = []
+    dfs(root)
+    flattenN(stack)
+    
+    function flattenN(st){
+        if (st.length === 1) {
+            st[0].left = null
+            return st[0]
+        }
+        
+        let first = st.shift()
+        first.left = null
+        first.right = flattenN(st)
+        return first
+    }
+    
+    function dfs(node){
+        if (!node) return  
+        stack.push(node)
+        dfs(node.left)
+        dfs(node.right)
+    }
+};
+
+
+//flatten multilevel doubly linked list  -- with node.child
+var flatten = function(head) {
+    if (!head) return null
+    let parent = head
+
+    while (!parent.child && parent.next){
+        parent =parent.next
+    }
+    
+    if (parent.child){
+        let temp = parent.next
+        parent.child.prev = parent
+        parent.next = flatten(parent.child)
+        parent.child = null
+        let last = parent.next
+
+        while (last.next){
+            last = last.next
+        }
+        last.next = temp
+        if (temp) temp.prev = last
+        return head 
+    } 
+    
+    return head
+};
+
+// minimum meeting rooms
+var minMeetingRooms = function(intervals) {
+    let starts = []
+    let ends = []
+    
+    for (const [s,e] of intervals){
+        starts.push(s)
+        ends.push(e)
+    }
+    starts.sort((a,b)=> a-b)
+    ends.sort((a,b)=>a-b)
+    
+    let s = 0
+    let e = 0
+    let count = 0
+    
+    while (s < intervals.length){
+        if (starts[s]>=ends[e]){
+            count--
+            e++
+        }
+        s++
+        count++
+    }
+    
+    return count
+};
+
+
+//valid tictactoe
+var validTicTacToe = function(board) {
+    
+    let count = 0
+    
+    for (let i = 0; i < 3; i++){
+        for (let k = 0; k<3; k++){
+            let char = board[i][k]
+            if (char === "X") count++
+            if (char === "O") count--
+        }
+    }
+
+    if (count > 1 || count < 0 ) return false
+    let curr = ""
+    let currCol = ""
+    let xWin = false
+    let oWin = false
+    for (let i = 0; i < 3; i++){
+        for (let k = 0; k<3; k++){
+            let char = board[i][k]
+            let char2 = board[k][i]
+            curr+=char
+            currCol+=char2
+        }
+        
+        if (curr === "XXX" || currCol === "XXX") xWin = true
+        if (curr === "OOO" || currCol==="OOO") oWin = true
+        curr = ""
+        currCol = ""
+    }
+    
+    if ("".concat(board[0][0], board[1][1], board[2][2]) === "OOO" || "".concat(board[0][2], board[1][1], board[2][0]) === "OOO") oWin = true
+    if ("".concat(board[0][0], board[1][1], board[2][2]) === "XXX" || "".concat(board[0][2], board[1][1], board[2][0]) === "XXX") xWin = true
+    
+    if (xWin && count <= 0) return false
+    if (oWin && count !== 0) return false
+    if (oWin && xWin) return false
+    return true
 };
