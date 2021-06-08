@@ -2348,3 +2348,255 @@ var validTicTacToe = function(board) {
     if (oWin && xWin) return false
     return true
 };
+
+
+
+///* design leaderboard OOP
+
+
+var Leaderboard = function() {
+    this.board = []
+    this.first = null
+};
+
+/** 
+ * @param {number} playerId 
+ * @param {number} score
+ * @return {void}
+ */
+Leaderboard.prototype.addScore = function(playerId, score) {
+    let scoreA = this.reset(playerId)
+    
+    this.board.push([playerId, score+scoreA])
+    this.board.sort((a,b)=> b[1]-a[1])
+    this.first = this.board[0][1]
+};
+
+/** 
+ * @param {number} K
+ * @return {number}
+ */
+Leaderboard.prototype.top = function(K) {
+    let i = 0
+    let count = 0
+    while (i < K){
+        count+=this.board[i][1]
+        i++
+    }
+    
+    return count
+};
+
+/** 
+ * @param {number} playerId
+ * @return {void}
+ */
+Leaderboard.prototype.reset = function(playerId) {
+    let i = 0
+    let score = 0
+    
+    while (i < this.board.length){
+        
+        if (this.board[i][0] === playerId){
+            score = this.board[i][1]
+            this.board.splice(i, 1)
+            i--
+        }
+        
+        i++
+    }
+    
+    return score
+};
+
+/** 
+ * Your Leaderboard object will be instantiated and called as such:
+ * var obj = new Leaderboard()
+ * obj.addScore(playerId,score)
+ * var param_2 = obj.top(K)
+ * obj.reset(playerId)
+ */
+
+
+
+//* decode string (3[a2[c] => accaccacc)
+var decodeString = function(s) {
+    let queue = [...s]
+    return decode(queue)
+};
+
+var decode = function(queue){
+    let multiplier = 0
+    let string = ""
+    
+    while (queue.length){
+        let char = queue.shift()
+        
+        if (!isNaN(char)){
+            multiplier= multiplier*10 + parseInt(char)
+        } else if (char==="["){
+            let res = decode(queue)
+            string+=res.repeat(multiplier)
+            multiplier = 0
+        } else if (char === "]"){
+            break
+        } else {
+            string+=char
+        }
+    }
+    
+    return string
+}
+
+
+//* unhappy friends
+var unhappyFriends = function(n, preferences, pairs) {
+    let map = {}
+    let pairMap = {}
+    let count = 0
+    
+    for (let i = 0; i < n; i++){
+        map[i]= preferences[i]
+    }
+    
+    for (let i = 0; i < pairs.length; i++){
+        let first = pairs[i][0]
+        let second = pairs[i][1]
+        pairMap[first]=second
+        pairMap[second]=first
+    }
+    
+    for (let i = 0; i < n; i++) {
+        const pair = pairMap[i]
+        if (pair === map[i][0]) continue
+        
+        let prefs = map[i].slice(0,map[i].indexOf(pair))
+        for (let p = 0; p < prefs.length; p++){
+            let ratherHave = prefs[p]
+
+            if (map[ratherHave].indexOf(i) < map[ratherHave].indexOf(pairMap[ratherHave])){
+                count++
+                break
+            }
+        }
+    }
+    
+    return count
+};
+
+
+//*minimum steps to make anagram
+var minSteps = function(s, t) {
+    let map = {}
+    for (let i = 0; i<s.length; i++){
+        map[s[i]] ? map[s[i]]+=1 : map[s[i]]= 1
+        map[t[i]] ? map[t[i]]-=1 : map[t[i]]= -1
+    }
+ 
+    let first = 0
+    for (const key in map){
+        if (map[key] > 0) first+=map[key]
+    }
+    
+    return first
+};
+
+
+//combination sum 4 
+var combinationSum4 = function(nums, target) {
+    let table = new Array(target + 1).fill(0)
+    table[0]=1
+
+    for (let i = 1; i < target+1; i++){
+        for (num of nums){
+           table[i]+= (i - num >=0) ? table[i-num] : 0 
+        }
+    }
+    
+    return table[target]
+};
+
+
+//* all paths lead to destination? -- T or F
+var leadsToDestination = function(n, edges, source, destination) {
+    let map = {}
+    
+    for (let [edge1, edge2] of edges){
+        if (!map[edge1]){
+            map[edge1]=[edge2]
+        } else {
+            map[edge1].push(edge2)
+        }
+    }
+    
+    if (map[destination]) return false
+    let visited = new Set()
+    return dfs(source)
+    
+    function dfs(curr){
+        if (!map[curr]){
+            return curr === destination
+        }
+        
+        for (let neighbor of map[curr]){
+            
+            if (visited.has(neighbor)) return false
+            visited.add(neighbor)
+            if (!dfs(neighbor)) return false
+            visited.delete(neighbor)
+        } 
+        return true
+    }
+};
+
+
+
+var pushDominoes = function(dominoes) {
+    dominoes = dominoes.split("")
+    let done = false
+    
+    while (!done){
+        done = true
+        for (let i = 0; i < dominoes.length-1; i++){
+            let domino = dominoes[i]
+            if (domino === "."){
+                if (dominoes[i+1]=== "L" && (i-1 < 0 || dominoes[i-1]!=="R")){
+                    dominoes[i]="L"
+                    done = false
+                }
+            } else if (domino ==="R"){
+                if (dominoes[i+1]==="." && (i+2 >= dominoes.length || dominoes[i+2]!=="L")){
+                    dominoes[i+1]="R"
+                    i++
+                    done = false
+                    if (dominoes[i+2]==="L" && dominoes[i+1]===".") dominoes[i+1]="L"
+                }
+            }
+        }
+    }
+    
+    return dominoes.join("")
+};
+
+
+
+//* Binary Tree Level Order Traversal - BFS
+
+var levelOrder = function(root) {
+    if (!root) return []
+    let ans = []
+    let queue = [root]
+    
+    while (queue.length){
+        ans.push(queue.map(n => n.val))
+        let curr = []
+        
+        for (let node of queue){
+            if (node.left) curr.push(node.left)
+            if (node.right) curr.push(node.right)
+        }
+        queue = curr 
+    }
+    
+    return ans
+};
