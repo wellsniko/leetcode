@@ -132,8 +132,7 @@ var removeNthFromEnd = function(head, n) {
     for (let node = head; node.next; node = node.next){
         stack.push(node.next)
     }
-    console.log(stack)
-    
+
     if (n > 1) {
         let removeIdx = stack.length-n
         if (removeIdx === 0 ){
@@ -2223,7 +2222,7 @@ var flatten = function(root) {
 };
 
 
-//flatten binary tree to linked list -- with dfs & stack
+//*flatten binary tree to linked list -- with dfs & stack
 
 var flatten = function(root) {
     if (!root) return null
@@ -2600,3 +2599,175 @@ var levelOrder = function(root) {
     
     return ans
 };
+
+
+//* Vertical Order Traversal of Binary Tree(rows and cols) - Hard  // [1,2,3,4,6,5,7] => [[4],[2],[1,5,6],[3],[7]]
+var verticalTraversal = function(root) {
+    let map = {}
+    let array = []
+    dfs(root, 0, 0)
+    
+    function dfs(node, row, col){
+        if (map[col]){
+            map[col].push({val: node.val, row: row})
+        } else {
+            map[col]=[{val: node.val, row: row}]
+        }
+        if (node.left) dfs(node.left, row+1, col-1)
+        if (node.right) dfs(node.right, row+1, col+1)
+    }
+
+    let keys = Object.keys(map).sort((a,b)=> a-b)
+    for (let key of keys){
+        array.push(map[key])
+    }
+
+    array = array.map(col => {
+        col.sort((a, b)=>{
+            if (a.row === b.row) return a.val-b.val
+            return a.row-b.row
+        })
+        return col.map(c => c.val)
+    })
+    
+    return array
+};
+
+
+
+//* Evaluation Division
+// Input: equations = [["a","b"],["b","c"]], values = [2.0,3.0], queries = [["a","c"],["b","a"],["a","e"],["a","a"],["x","x"]]
+// Output: [6.00000,0.50000,-1.00000,1.00000,-1.00000]
+var calcEquation = function(equations, values, queries) {
+    let map = {}
+    let idx = 0
+    for (let eq of equations){
+        if (!map[eq[0]]){
+            map[eq[0]]= {[eq[1]]: values[idx]}
+        } else {
+            map[eq[0]][eq[1]]= values[idx]
+        }
+        
+        if (!map[eq[1]]){
+            map[eq[1]]= {[eq[0]]: 1/values[idx]}
+        } else {
+            map[eq[1]][eq[0]]= 1/values[idx]
+        }
+        idx++
+    }
+    
+    let ans = []
+    
+    for (let i = 0; i< queries.length; i++){
+        let start = queries[i][0]
+        let end = queries[i][1]
+        ans.push(find(start,end, 1))
+    }
+
+    return ans
+
+    function find(start, end, curr, visited=new Set()){
+        if (!map[start]) return -1.0
+        if (map[start][end]) return curr * map[start][end]
+        visited.add(start)
+        
+        for (let path in map[start]){
+            if (!visited.has(path)){
+                let currRes = find(path, end, curr*map[start][path], visited)
+                if (currRes>0) return currRes
+            }
+        }
+        return -1.0
+    }
+};
+
+
+//* restore/ generate IP addresses - used DFS with backtracking
+// Input: s = "25525511135"
+// Output: ["255.255.11.135","255.255.111.35"]
+var restoreIpAddresses = function(s) {
+    let solution = []
+    dfs([], 0)
+    return solution
+    
+    function dfs(curr, idx){
+        if (curr.length === 4 && idx ===s.length){
+            solution.push(curr.join("."))
+            return
+        }
+        
+        if (idx === s.length || curr.length === 4) return
+        for (let i= idx; i < s.length; i++){
+            if (i !== idx && s[idx]==="0") return
+            let num= parseInt(s.slice(idx, i+1))
+
+            if (num > 255){
+                return
+            }
+
+            curr.push(num)
+            dfs(curr, i+1)
+            curr.pop()
+        }
+    }
+};
+
+
+
+
+//design lottery system
+
+var Lottery = function(){
+    this.names = []
+    this.indices = {}
+    this.size = 0
+}
+
+Lottery.prototype.addParticipant = function(participant){
+    if (this.indices[participant] === undefined) {
+        this.names.push(participant)
+        this.indices[participant] = this.size
+        this.size++
+    }
+}
+
+Lottery.prototype.removeParticipant = function(participant){
+    if (this.indices[participant] !== undefined){
+        //switch particiapnt and last participant in the array, also switch the object values. Delete the removed participant's kv pair and pop() end of the array
+        let last = this.names[this.names.length-1]
+        let index = this.indices[participant]
+        this.indices[last] = index
+        this.names[index] = last
+        this.names.pop()
+        delete this.indices[participant]
+        this.size--
+    }
+}
+
+Lottery.prototype.getWinner = function (){
+    let i = Math.floor(Math.random()* this.size)
+    console.log("Winner is " + this.names[i])
+    return this.names[i]
+}
+
+
+var lottery = new Lottery()
+
+lottery.addParticipant("Niko")
+lottery.addParticipant("Baba")
+lottery.addParticipant("Juliana")
+lottery.addParticipant("Jon")
+lottery.addParticipant("Maria")
+lottery.addParticipant("Maria")
+
+lottery.removeParticipant("Baba")
+lottery.addParticipant("Person")
+lottery.removeParticipant("Person")
+lottery.removeParticipant("Niko")
+lottery.removeParticipant("Jon")
+lottery.removeParticipant("Juliana")
+lottery.removeParticipant("Maria")
+
+console.log(lottery)
+lottery.getWinner()
+
