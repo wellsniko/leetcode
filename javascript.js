@@ -2771,3 +2771,58 @@ lottery.addParticipant("Person")
 console.log(lottery)
 lottery.getWinner()
 
+
+
+var intervalIntersection = function (firstList, secondList) {
+    let res = []
+    let i = 0, j = 0
+    let min
+    let max
+
+    while (i < firstList.length && j < secondList.length) {
+        min = Math.max(firstList[i][0], secondList[j][0])
+        max = Math.min(firstList[i][1], secondList[j][1])
+
+        if (min <= max) res.push([min, max])
+
+        if (firstList[i][1] < secondList[j][1]) {
+            i++
+        } else {
+            j++
+        }
+    }
+
+    return res
+};
+
+
+
+//all valid anigrams, 96% time, 93% space
+var findAnagrams = function(string, p) {
+
+    if (!string.length || !p.length) return []
+    
+    let map = new Array(26).fill(0)
+    for (let l of p){
+        map[l.charCodeAt()-97]++
+    }
+    
+    let res = []
+    let l = 0, r = 0
+    
+    while (r < string.length){
+        const char = string[r].charCodeAt()-97
+        map[char]--
+        
+        while (map[char] < 0){
+            const char2 = string[l].charCodeAt()-97
+            map[char2]++
+            l++
+        }
+
+        if (r-l+1 === p.length) res.push(l)
+        r++
+    }
+    
+    return res
+};
