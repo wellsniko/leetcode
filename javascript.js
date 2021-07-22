@@ -2826,3 +2826,145 @@ var findAnagrams = function(string, p) {
     
     return res
 };
+
+
+
+//maximum product in subarray (continuous)
+var maxProduct = function(nums) {
+    let prevMax = nums[0]
+    let prevMin = nums[0]
+    let res = nums[0]
+    let max
+    let min
+    
+    for (let i = 1; i < nums.length; i++){
+        const num = nums[i]
+        max = Math.max(prevMax*num, num, prevMin*num)
+        min = Math.min(prevMax*num, num, prevMin*num)
+        prevMax=max
+        prevMin=min
+
+        res=Math.max(max, res)
+    }
+
+    return res
+};
+
+
+var slidingPuzzle = function (board) {
+    let moves = {
+        0: [1, 3],
+        1: [0, 2, 4],
+        2: [1, 5],
+        3: [0, 4],
+        4: [1, 3, 5],
+        5: [2, 4]
+    };
+
+    let visited = new Set()
+    let state = board.flat().join("")
+    let queue = [[state.indexOf("0"), state, 0]]
+
+    while (queue.length) {
+        const [curr, state, steps] = queue.shift()
+
+        if (state === "123450") return steps
+        if (visited.has(state)) continue
+
+        visited.add(state)
+        for (let dir of moves[curr]) {
+            let temp = state.split('');
+            [temp[dir], temp[curr]] = [temp[curr], temp[dir]]
+
+            queue.push([dir, temp.join(''), steps + 1])
+        }
+    }
+    return -1
+};
+
+
+
+//text justification - Bad memory optimization
+var fullJustify = function(words, maxWidth) {
+    let res = []
+    if (words.length === 1) res.push([words[0]])
+    
+    let spaces = words[0].length
+    let start = 0
+    
+    for (let i = 1; i < words.length; i++){
+        let word = words[i]
+        
+        if (spaces + 1 + word.length > maxWidth){
+            res.push(words.slice(start, i))
+            spaces = word.length
+            start = i
+        } else {
+            spaces= spaces+1+word.length
+        }
+        
+        if (i === words.length-1){
+            res.push(words.slice(start))
+        }
+    }
+
+    let solution = []
+    let last = false
+    
+    for (let i = 0; i < res.length; i++){
+        if (i === res.length-1) last = true
+        solution.push(process(res[i], maxWidth, last))
+    }
+    
+    return solution
+    
+    function process(line, width, isLast){
+        let string = ""
+        width-=line[0].length
+        string+=line.shift()
+        let len = 0
+        
+        for (let word of line){
+            len+=word.length
+        }
+        
+        let needed = width-len
+        
+        if (line.length===0){
+            string+=" ".repeat(needed)
+            return string
+        } else if (line.length ===1 && isLast === true){
+            let away = line[0].length
+            
+            string+=" "
+            string+=line[0]
+            string+=" ".repeat(needed-1)
+            return string
+        } 
+        
+        let normalSpace = Math.floor(needed/line.length)
+        let extraSpace = needed%line.length
+        let lastSpace = width-(line.length+len)
+        
+        if (isLast){
+            for (let word of line){
+                string+=" "
+                string+=word
+            }
+            string+=" ".repeat(lastSpace)
+            return string
+        }
+        
+        for (let word of line){
+            if (extraSpace>0){
+                string+=" "
+                extraSpace--
+            }
+            
+            string+=" ".repeat(normalSpace)
+            string+=word
+        }
+            
+        return string
+    }
+};
