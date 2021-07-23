@@ -2968,3 +2968,105 @@ var fullJustify = function(words, maxWidth) {
         return string
     }
 };
+
+
+//valid number Hard
+var isNumber = function(s) {
+    const states = {
+        'start': {'sign':'int_sign', 'digit':'integer', 'dot':'point'},
+        'int_sign': {'digit':'integer', 'dot':'point'},
+        'integer': {'digit':'integer', 'dot':'frac', 'e':'exp'},
+        'point': {'digit':'frac'},
+        'frac': {'digit':'frac', 'e':'exp'},
+        'exp': {'digit':'exp_int', 'sign':'exp_sign'},
+        'exp_sign': {'digit':'exp_int'},
+        'exp_int': {'digit':'exp_int'}
+    }
+    
+    s = s.trim()
+    if (!s.length) return false
+    
+    let state = "start"
+    let temp
+    for (let i=0; i< s.length; i++){
+        temp = states[state][process(s[i])]
+        if (temp === undefined) return false
+        state=temp
+    }
+
+    if (!["integer", "frac", "exp_int"].includes(temp)) return false
+    return true
+    
+    
+    function process(char){
+        if (!isNaN(char)) return "digit"
+        if (char === "e" || char ==="E") return "e"
+        if (char ===".") return "dot"
+        if (char === "-" || char === "+") return "sign"
+        return false
+    }
+};
+
+
+//string compression
+var compress = function(chars) {
+    let count = 1
+    let start = 0
+    for (let i = 1; i < chars.length; i++){
+
+        if (chars[i]===chars[i-1]){
+            count++
+
+            if(i===chars.length-1){
+                let countString = String(count).split("")
+                chars.splice(start+1, count-1,...countString)
+                break
+
+            }
+            
+        } else{
+            if (count ===1){
+                start = i
+                continue
+            } else {
+                let countString = String(count).split("")
+                chars.splice(start+1, count-1,...countString)
+                i = 1+countString.length+start
+                start = i        
+                count =1                
+            }
+
+        }
+        
+    }
+
+    return chars.length
+};
+
+
+var evalRPN = function(tokens) {
+    let stack = []
+    
+    for (let i =0; i<tokens.length; i++){   
+        const thing = tokens[i]
+
+        if (isNaN(thing)){
+            let two = Number(stack.pop())
+            let one = Number(stack.pop())
+            
+            if (thing === "+"){
+                stack.push(one+two)
+            } else if (thing === "-"){
+                stack.push(one-two)
+            } else if (thing === "/"){
+                let divO = Math.floor(Math.abs(one)/Math.abs(two))
+                one < 0 && two > 0 || one > 0 && two < 0 ? stack.push(divO*-1): stack.push(divO)     
+            } else {
+                stack.push((one*two))
+            }
+        } else {
+            stack.push(thing)
+        }
+    }
+};
+    
