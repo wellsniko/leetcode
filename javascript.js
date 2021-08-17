@@ -395,7 +395,6 @@ var permute = function(nums) {
         }
             
         for (let value of nums) {
-            console.log(value)
             if (temp.has(value)){
                 continue
             }
@@ -685,22 +684,16 @@ var lengthOfLongestSubstring = function(s) {
     let memory = new Map();
     let l = 0;
     let max = 0;
-    // console.log(memory)
-    // growing window algorithm
-    // console.log([...s].entries([]))
+
     for ([e,r] of [...s].entries()) {
 
         if (memory.has(e)) {
-            // shrink left...
             l = Math.max(l, memory.get(e) + 1);
         }
-        // increase window
-            // console.log(memory)
 
         memory.set(e, r);
         if (r+1 - l > max) max = r+1 - l;
     }
-        // console.log(memory)
 
     return max;
 };
@@ -1452,7 +1445,7 @@ node7.right = node8
     // b 2  c 3
    
     
-console.log(binaryProduct(node1, 12))
+// console.log(binaryProduct(node1, 12))
 
 
 
@@ -2751,25 +2744,25 @@ Lottery.prototype.getWinner = function (){
 }
 
 
-var lottery = new Lottery()
+// var lottery = new Lottery()
 
-lottery.addParticipant("Niko")
-lottery.addParticipant("Baba")
-lottery.addParticipant("Juliana")
-lottery.addParticipant("Jon")
-lottery.addParticipant("Maria")
-lottery.addParticipant("Maria")
+// lottery.addParticipant("Niko")
+// lottery.addParticipant("Baba")
+// lottery.addParticipant("Juliana")
+// lottery.addParticipant("Jon")
+// lottery.addParticipant("Maria")
+// lottery.addParticipant("Maria")
 
-lottery.removeParticipant("Baba")
-lottery.addParticipant("Person")
-// lottery.removeParticipant("Person")
-// lottery.removeParticipant("Niko")
-// lottery.removeParticipant("Jon")
-// lottery.removeParticipant("Juliana")
-// lottery.removeParticipant("Maria")
+// lottery.removeParticipant("Baba")
+// lottery.addParticipant("Person")
+// // lottery.removeParticipant("Person")
+// // lottery.removeParticipant("Niko")
+// // lottery.removeParticipant("Jon")
+// // lottery.removeParticipant("Juliana")
+// // lottery.removeParticipant("Maria")
 
-console.log(lottery)
-lottery.getWinner()
+// console.log(lottery)
+// lottery.getWinner()
 
 
 
@@ -3070,3 +3063,154 @@ var evalRPN = function(tokens) {
     }
 };
     
+//minimum sliding window
+var minWindow = function(s, t) {
+    let map = {}
+    for (let l of t){
+        if (!map[l]) map[l]=0
+        map[l]++
+    }
+
+    let left = 0
+    let right = 0
+    let minLen = Infinity
+    let start
+    let count = t.length
+    while (right < s.length){
+        if (map[s[right]] > 0){
+            count--    
+        }
+        
+        map[s[right]]--
+        right++
+        
+        while(count===0){
+            if (right-left < minLen) {
+                minLen = right-left
+                start=left
+            }
+            if (map[s[left]]===0) {
+                count++
+            }
+            map[s[left]]++
+            left++
+        }
+    }
+    return minLen == Infinity ? "" : s.slice(start, start+minLen)
+};
+
+
+
+///3x4
+//12
+
+left: 0,4,8
+right: 3,7,11
+
+
+
+
+function printMoves(m,n){   
+    let moves = {}
+
+    for (let i=0; i<m*n; i++){
+        if (!moves[i])moves[i]=[]
+
+        if (i%n===0){
+            moves[i].push(i+1)
+        } else if ((i+1)%n===0){
+            moves[i].push(i-1)
+        } else {
+            moves[i].push(i+1, i-1)
+        }
+        if (i < n){
+            moves[i].push(i+n)
+        } else if (i+n>=m*n){
+            moves[i].push(i-n)
+        } else {
+            moves[i].push(i+n, i-n)
+        }
+    }
+    return moves
+}
+
+
+console.log(printMoves(5,6))
+
+
+
+//minimum rectangle made up of all 1's
+var maximalRectangle = function(matrix) {
+    if (!matrix.length) return 0
+    var m = matrix[0].length
+    var n = matrix.length
+    
+    let dp = new Array(n).fill([]).map(()=>new Array(m).fill(0))
+    let max = 0
+    
+    for (let r = 0; r<n; r++){
+        for (let c=0; c<m; c++){
+            if (matrix[r][c]==="0")continue
+            
+            dp[r][c]+= dp[r-1] ? Number(dp[r-1][c])+1 : 1
+            let min = dp[r][c]
+            
+            for (let k = c; k>= 0; k--){
+                if (dp[r][k] === "0") break
+                min = dp[r][k]<min ? dp[r][k] : min
+                max = Math.max(max, min * (c-k +1))
+            }
+        }
+    }
+    return max
+};
+
+
+//spiral matrix
+var spiralOrder = function(matrix) {
+    if (matrix.length === 1){
+        return matrix[0]
+    } else if (matrix.length === 0){
+        return []
+    }
+    
+    let res = []
+    let visited = new Set()
+    
+    function spin(row, col, dir){
+        if (row < 0 || col < 0 || visited.has(`${row} ${col}`)) return 
+        res.push(matrix[row][col])
+        visited.add(`${row} ${col}`)
+        
+        switch(dir){
+            case "right":
+                if (col === matrix[0].length-1 || visited.has(`${row} ${col+1}`)){
+                    return spin(row+1, col, "down")
+                } else {
+                    return spin(row, col+1, "right")
+                }
+            case "left":
+                if (col===0 || visited.has(`${row} ${col-1}`)){
+                    return spin(row-1, col, "up")
+                } else {
+                    return spin(row, col-1, "left")
+                }
+            case "down":
+                if (row === matrix.length-1 || visited.has(`${row+1} ${col}`)){
+                    return spin(row, col-1, "left")
+                } else {
+                    return spin(row+1, col, "down")
+                }
+            case "up":
+                if (row === 0 || visited.has(`${row-1} ${col}`)) {
+                    return spin(row, col+1, "right")
+                } else {
+                    return spin (row-1, col, "up")
+                }
+        }
+        
+    }
+    
+    spin(0,0, "right")
+    return res
+};
