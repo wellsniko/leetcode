@@ -3214,3 +3214,27 @@ var spiralOrder = function(matrix) {
     spin(0,0, "right")
     return res
 };
+
+
+//delete duplicate nodes
+var deleteDuplicates = function(head) {
+    if(!head) return head
+    let blankHead = new ListNode(0, null)
+    let node = blankHead
+    
+    while (head && head.next){
+        if (head.val !== head.next.val){
+            node.next = head
+            node = head
+            head = head.next
+        } else {
+            let next = head.next
+            while (next !== null && head.val === next.val){
+                next = next.next
+            }
+            head = next
+        }      
+    }
+    node.next = head
+    return blankHead.next
+};
